@@ -26,7 +26,7 @@ module.exports = function ZigRunPlugin() {
           pathNode.replaceWithSourceString(`"${output.trim()}"`);
         } catch (err) {
           throw pathNode.buildCodeFrameError(
-            `Erro ao rodar Zig: ${err.message}`
+            `Error to run Zig: ${err.message}`
           );
         }
       },

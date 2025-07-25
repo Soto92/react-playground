@@ -420,7 +420,10 @@ module.exports = function (webpackEnv) {
                 ],
 
                 plugins: [
+                  // Custom plugins
                   require.resolve("./myPlugins/babel-plugin-zig-run.js"),
+                  require.resolve("./myPlugins/babel-plugin-rust-run.js"),
+                  // End of custom plugins
                   isEnvDevelopment &&
                     shouldUseReactRefresh &&
                     require.resolve("react-refresh/babel"),

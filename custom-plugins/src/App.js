@@ -4,9 +4,17 @@ import "./App.css";
 function App() {
   return (
     <div className="App">
-      <h2>
-        Zig Output: <Zig src="./zig/hello.zig" />
-      </h2>
+      <div className="Content">
+        <h1>MultiLang JS Executor</h1>
+        <ul>
+          <li>
+            Rust Output: <Rust src="./rust/hello.rs" />
+          </li>
+          <li>
+            Zig Output: <Zig src="./zig/hello.zig" />
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }

@@ -7,12 +7,15 @@ This project demonstrates how to create **custom Babel plugins** to dynamically 
 ```
 custom-plugins/
 ├── config/
-│ └── myPlugins/
-│ └── babel-plugin-zig-run.js
+│   └── myPlugins/
+│       ├── babel-plugin-zig-run.js
+│       └── babel-plugin-rust-run.js
 ├── src/
-│ ├── App.js
-│ └── zig/
-│ └── hello.zig
+│   ├── App.js
+│   ├── zig/
+│   │   └── hello.zig
+│   └── rust/
+│       └── hello.rs
 └── ...
 ```
 
@@ -37,17 +40,49 @@ During the build process:
 4. Replaces the JSX element with the string output.
 
 > Example rendered output:
-> `Zig Output: 42`
+> `Zig Output: Hello from Zig!`
 
 ---
 
-## 🔣 Example: `hello.zig`
+## 🦀 Plugin: `babel-plugin-rust-run` (Experimental)
+
+Similarly, you can run Rust code at build time and inject the output using a `<Rust />` tag.
+
+### How it works:
+
+```jsx
+<h2>
+  Rust Output: <Rust src="./rust/hello.rs" />
+</h2>
+```
+
+During the build process:
+
+1. The plugin compiles the Rust source file with `rustc` to a temporary executable.
+2. Executes the compiled binary.
+3. Replaces the JSX element with the output string.
+
+**Note:** On Windows, the plugin automatically appends `.exe` to the compiled binary and wraps the path with quotes to ensure execution.
+
+---
+
+## 🔣 Example Files
+
+### `hello.zig`
 
 ```zig
 const std = @import("std");
 
 pub fn main() void {
-    std.debug.print("Hi from Zig", .{});
+    std.debug.print("Hello from Zig!", .{});
+}
+```
+
+### `hello.rs`
+
+```rust
+fn main() {
+    println!("Hello from Rust!");
 }
 ```
 
@@ -55,19 +90,22 @@ pub fn main() void {
 
 ## ⚙️ Setup Instructions
 
-1. Add the Babel plugin to Webpack (after ejecting Create React App):
+1. Add the Babel plugins to your Webpack or Babel config (after ejecting Create React App):
 
-   ```js
-   plugins: [require.resolve("./config/myPlugins/babel-plugin-zig-run")];
-   ```
+```js
+plugins: [
+  require.resolve("./config/myPlugins/babel-plugin-zig-run"),
+  require.resolve("./config/myPlugins/babel-plugin-rust-run"),
+];
+```
 
-2. Disable ESLint warning for the custom JSX tag:
+2. Disable ESLint warnings for custom JSX tags:
 
-   ```js
-   /* eslint-disable react/jsx-no-undef */
-   ```
+```js
+/* eslint-disable react/jsx-no-undef */
+```
 
-3. Use the component in your React code like shown above.
+3. Use the components in your React code as shown above.
 
 ---
 
@@ -75,29 +113,31 @@ pub fn main() void {
 
 - Node.js
 - [Zig](https://ziglang.org/download/) installed on your system
+- [Rust](https://www.rust-lang.org/tools/install) installed on your system
 - A React project with customizable Babel config (e.g., ejected CRA)
 
 ---
 
 ## 🔭 Future Ideas
 
-- Add support for other runtimes:
+- Add support for other languages:
 
-  - Rust (`<Rust src="./hello.rs" />`)
-  - C
-  - Go
+  - C, Go, etc.
 
-- Smart caching of outputs
-- Async component support (SSR-ready)
-- Publish plugins to NPM
+- Smart caching of output to speed up builds
+- Async component support for SSR
+- Publish these plugins as independent NPM packages
 
 ---
 
 ## 🧪 Notes
 
-- The Zig code runs at **build time** using `execSync`, not in the browser.
-- The plugin replaces JSX with static string output.
-- Make sure your Zig code is fast and doesn’t block the build process.
+- Code runs at **build time** via `execSync` (not in the browser).
+- Plugins replace JSX with static string output injected into your bundle.
+- Make sure your code executes quickly to avoid blocking builds.
+- Windows paths are handled correctly for Rust plugin by appending `.exe` and quoting the binary path.
+
+---
 
 ## 👤 Author
 

@@ -44,6 +44,11 @@ During the build process:
 
 ---
 
+## Demo
+
+<img width="1036" height="681" alt="Captura de tela 2025-07-25 130635" src="https://github.com/user-attachments/assets/00fa0b0b-3348-4c73-9fc1-b0e3bc8064c3" />
+
+
 ## 🦀 Plugin: `babel-plugin-rust-run` (Experimental)
 
 Similarly, you can run Rust code at build time and inject the output using a `<Rust />` tag.

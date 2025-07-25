@@ -128,6 +128,67 @@ plugins: [
 - Async component support for SSR
 - Publish these plugins as independent NPM packages
 
+## Why Rust and Zig in the frontend?
+
+✅ **Rust & Zig**
+
+- Compiled to machine code → **much faster execution**
+- No garbage collector → **full control over memory**
+- Perfect for speeding up **critical parts of your build or app**
+
+❌ **JavaScript**
+
+- Single-threaded
+- Interpreted or JIT → **less predictable performance**
+- Slow for **heavy computational tasks**
+
+## 🧠 Examples of Complex Services Built with Rust
+
+### 1. **Image Converter (resize, compression, filters)**
+
+- Resize large images with high performance.
+- Apply filters and compression with minimal quality loss.
+- JavaScript struggles with large images — Rust handles them in milliseconds.
+
+---
+
+### 2. **File or Folder Indexer (like a mini Google Desktop)**
+
+- Scan thousands of files on disk.
+- Index content (text, names, timestamps).
+- JavaScript has limited filesystem access and poor multithreading support.
+
+---
+
+### 3. **Large XML/JSON Validator**
+
+- Validate and transform 100MB+ files.
+- Apply complex validation rules and generate reports.
+- JavaScript chokes on large or deeply nested data structures.
+
+---
+
+### 4. **Hash / Cryptography / Checksum Generator**
+
+- Compute SHA256, MD5, BLAKE3, etc.
+- Ideal for file integrity checks or secure operations.
+- JavaScript is slow and insecure for these low-level memory tasks.
+
+---
+
+### 5. **DSL Parser or Compiler (Custom Language)**
+
+- Create a mini-language or transformer (e.g., Markdown → HTML).
+- Rust excels at parsing, AST handling, and real-time performance.
+
+---
+
+### 6. **Full-Text Search Engine**
+
+- Build a lightweight search engine (like Elasticsearch).
+- Index and search through thousands of entries.
+- Rust has libraries like [`tantivy`](https://github.com/quickwit-oss/tantivy) — JavaScript can’t even come close.
+
 ---
 
 ## 🧪 Notes

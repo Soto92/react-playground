@@ -37,7 +37,9 @@ src/
  └─ index.html     # Entry point
 ```
 
----
+## Demo
+
+https://github.com/user-attachments/assets/0af4a8ba-516a-4465-b83d-491066cbbb6d
 
 ## 📝 Code Overview
 

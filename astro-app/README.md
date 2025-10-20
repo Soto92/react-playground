@@ -6,6 +6,8 @@ npm create astro@latest -- --template basics
 
 ### Creating the project:
 
+<img width="770" height="626" alt="Captura de tela 2025-10-20 140430" src="https://github.com/user-attachments/assets/dd793071-00b9-47ee-8117-127192de9ed9" />
+
 > 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
 ## 🚀 Project Structure

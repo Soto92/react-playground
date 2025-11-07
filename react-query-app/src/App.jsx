@@ -1,7 +1,7 @@
 const App = () => {
   return (
     <div>
-      <h1>Astro vs React Fetch Comparison</h1>
+      <h1>React component</h1>
     </div>
   );
 };

@@ -1,0 +1,13 @@
+---
+import { withMinDelay } from "../utils/delay.js";
+
+const data = await withMinDelay(
+  fetch("https://api.github.com/repos/withastro/astro").then((r) => r.json()),
+  3000
+);
+---
+
+<section style="border: 1px solid #aaa; padding: 1rem; margin-top: 1rem;">
+  <h2>Astro Server Fetch</h2>
+  <pre>{JSON.stringify(data.owner, null, 2)}</pre>
+</section>

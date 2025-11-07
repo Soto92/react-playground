@@ -1,4 +1,22 @@
 ---
 import App from '../cra-project/App.jsx';
+
+import FetchAstro from "../components/FetchAstro.astro";
+import FetchReact from "../components/FetchReact.jsx";
 ---
-<App client:load />
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Astro vs React Fetch</title>
+  </head>
+  <body style="font-family: sans-serif;">
+    <App client:load />
+
+    <!-- Server-side rendered -->
+    <FetchAstro />
+
+    <!-- Client-side rendered -->
+    <FetchReact client:load />
+  </body>
+</html>

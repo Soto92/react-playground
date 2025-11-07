@@ -33,7 +33,7 @@ Inside of your Astro project, you'll see the following folders and files:
 
 ## Demo
 
-[]
+https://github.com/user-attachments/assets/b81bcb08-8c9d-41ac-9bb4-ba4218ce5a93
 
 ## 🧞 Commands
 

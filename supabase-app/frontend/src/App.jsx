@@ -1,31 +1,46 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import "./App.css";
+import { useEffect, useState } from 'react';
+import { supabase } from './supabaseClient';
 
-function App() {
-	const [count, setCount] = useState(0);
+export default function App() {
+  const [todos, setTodos] = useState([]);
+  const [text, setText] = useState('');
 
-	return (
-		<div className="App">
-			<div>
-				<a href="https://reactjs.org" target="_blank" rel="noreferrer">
-					<img src={reactLogo} className="logo react" alt="React logo" />
-				</a>
-			</div>
-			<h1>Rspack + React</h1>
-			<div className="card">
-				<button type="button" onClick={() => setCount(count => count + 1)}>
-					count is {count}
-				</button>
-				<p>
-					Edit <code>src/App.jsx</code> and save to test HMR
-				</p>
-			</div>
-			<p className="read-the-docs">
-				Click on the Rspack and React logos to learn more
-			</p>
-		</div>
-	);
+  async function load() {
+    const { data } = await supabase.from('todos').select('*').order('id');
+    setTodos(data);
+  }
+
+  async function add() {
+    if (!text) return;
+    await supabase.from('todos').insert({ text });
+    setText('');
+    load();
+  }
+
+  async function toggle(todo) {
+    await supabase.from('todos').update({ done: !todo.done }).eq('id', todo.id);
+    load();
+  }
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  return (
+    <div style={{ padding: 20 }}>
+      <h1>TODOs</h1>
+
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+      <button onClick={add}>Adicionar</button>
+
+      <ul>
+        {todos.map((t) => (
+          <li key={t.id} onClick={() => toggle(t)}>
+            <input type="checkbox" checked={t.done} readOnly />
+            {t.text}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
-
-export default App;

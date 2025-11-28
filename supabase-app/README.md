@@ -11,6 +11,8 @@ It is organized into two independent services:
 
 ## Demo
 
+https://github.com/user-attachments/assets/d9f7a5a1-72f1-4e51-843a-cb63d088d760
+
 ## Project Structure
 
 ```

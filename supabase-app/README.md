@@ -1,13 +1,9 @@
 # Supabase App
 
-This project is a full-stack application built with Supabase as the backend platform.
-It is organized into two independent services:
-
-- **Frontend:** React (using Rspack)
-- **Backend:** Node.js with Express
-- **Vendor:** Supabase configuration and SQL
-
----
+This project is a full-stack application using **Supabase**, with a
+React frontend and an Express backend.  
+The frontend no longer accesses Supabase directly — all database
+operations now go through the backend.
 
 ## Demo
 
@@ -17,9 +13,10 @@ https://github.com/user-attachments/assets/d9f7a5a1-72f1-4e51-843a-cb63d088d760
 
 ```
 supabase-app/
-  frontend/        # React app (Rspack)
-  backend/         # Node + Express API
-  supabase/        # Supabase SQL, migrations, seed, config
+frontend/        # React app (Rspack)
+backend/         # Node + Express API (uses Supabase Service Role)
+supabase/        # SQL, migrations, seed, config
+
 ```
 
 ---
@@ -28,14 +25,21 @@ supabase-app/
 
 - Node.js (LTS recommended)
 - npm, pnpm, or yarn
-- Supabase account and project
-- Supabase CLI (optional)
+- A Supabase project
+- Supabase CLI (optional but recommended)
 
 ---
 
-## Frontend
+# Frontend
 
-The frontend is a React application bundled with **Rspack**.
+The frontend is a React app bundled with **Rspack**.  
+It communicates with the backend via HTTP:
+
+- `GET  /todos`
+- `POST /todos`
+- `PUT  /todos/:id/toggle`
+
+The frontend does **not** use the Supabase client anymore.
 
 ### Development
 
@@ -53,10 +57,16 @@ npm run build
 
 ---
 
-## Backend
+# Backend
 
-The backend is a Node.js server using Express.
-It communicates with Supabase using the official Supabase JavaScript client.
+The backend is a Node.js API built with **Express**.
+It is responsible for **all interactions with the Supabase database**.
+
+It uses:
+
+- `SUPABASE_SERVICE_ROLE_KEY` for privileged server access
+- `cors` and JSON middleware
+- REST endpoints consumed by the frontend
 
 ### Development
 
@@ -66,23 +76,101 @@ npm install
 npm run start
 ```
 
-### Environment Variables
+---
 
-Create a `.env` file in the `backend` directory:
+## Environment Variables
+
+Create a file `backend/.env` with:
 
 ```
+PORT=3000
 SUPABASE_URL=your_supabase_url
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-SUPABASE_ANON_KEY=your_anon_key
-PORT=3000
 ```
 
-The backend should always use the **service role key** for server operations that require bypassing RLS (only on trusted servers).
+### ⚠️ Important: Security Warning
 
-## Running the Full Stack
-
-1. Start the backend server (Express).
-2. Start the frontend (React + Rspack).
-3. Confirm that both are properly connected to your Supabase project.
+- The backend **must use the Service Role Key** (server-side only).
+- **Never expose** the Service Role Key to the frontend.
+- Enable **RLS (Row Level Security)** in Supabase when ready.
+- The backend will bypass RLS as expected.
 
 ---
+
+## API Endpoints
+
+### `GET /todos`
+
+Returns the full list of todos.
+
+### `POST /todos`
+
+Creates a new todo.
+
+```json
+{ "text": "my todo" }
+```
+
+### `PUT /todos/:id/toggle`
+
+Inverts the `done` status for the given todo.
+
+---
+
+# Running the Full Stack
+
+### 1. Start the backend
+
+```bash
+cd backend
+npm run start
+```
+
+It will run at:
+
+```
+http://localhost:3000
+```
+
+### 2. Start the frontend
+
+```bash
+cd frontend
+npm run dev
+```
+
+It will typically run at:
+
+```
+http://localhost:8080  (or similar)
+```
+
+### 3. Open the app
+
+The frontend will call the backend automatically.
+
+---
+
+# Supabase Folder
+
+The `supabase/` directory contains:
+
+- SQL schema (tables, policies)
+- Migrations
+- Seed data
+- Configuration files for Supabase CLI
+
+---
+
+# Notes & Next Steps
+
+- You can extend the backend to support authentication.
+- You can enable RLS once you add user-based tables.
+- You may containerize both services with Docker.
+
+If you want, I can generate:
+
+- Docker setup (Dockerfile + docker-compose)
+- RLS + Auth policies
+- TypeScript version of the backend
+- Production build workflow

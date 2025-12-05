@@ -2,6 +2,7 @@
   "name": "supabase-app",
   "private": true,
   "version": "1.0.0",
+  "author": "Mauricio Soto",
   "scripts": {
     "build": "rspack build",
     "dev": "rspack dev",
@@ -10,8 +11,6 @@
     "preview": "rspack preview"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.86.0",
-    "dotenv": "^17.2.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

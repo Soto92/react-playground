@@ -4,8 +4,6 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from '@rspack/cli';
 import { rspack, DefinePlugin } from '@rspack/core';
 import { ReactRefreshRspackPlugin } from '@rspack/plugin-react-refresh';
-import dotenv from 'dotenv';
-dotenv.config();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const isDev = process.env.NODE_ENV === 'development';
@@ -57,10 +55,6 @@ export default defineConfig({
   plugins: [
     new rspack.HtmlRspackPlugin({
       template: './index.html',
-    }),
-    new DefinePlugin({
-      'import.meta.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
-      'import.meta.env.SUPABASE_KEY': JSON.stringify(process.env.SUPABASE_KEY),
     }),
     isDev ? new ReactRefreshRspackPlugin() : null,
   ],

@@ -13,34 +13,71 @@ const supabase = createClient(
   process.env.SUPABASE_KEY
 );
 
+// ---------------------
+// GET /todos
+// ---------------------
 app.get("/todos", async (req, res) => {
-  const { data, error } = await supabase.from("todos").select("*");
-  if (error) return res.status(400).json(error);
-  res.json(data);
+  try {
+    const { data, error } = await supabase
+      .from("todos")
+      .select("*")
+      .order("id");
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
+// ---------------------
+// POST /todos
+// ---------------------
 app.post("/todos", async (req, res) => {
   const { text } = req.body;
-  const { data, error } = await supabase
-    .from("todos")
-    .insert({ text })
-    .select();
-  if (error) return res.status(400).json(error);
-  res.json(data[0]);
+
+  try {
+    const { data, error } = await supabase
+      .from("todos")
+      .insert({ text })
+      .select()
+      .single();
+
+    if (error) throw error;
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.put("/todos/:id", async (req, res) => {
+// ---------------------
+// PUT /todos/:id/toggle
+// ---------------------
+app.put("/todos/:id/toggle", async (req, res) => {
   const { id } = req.params;
-  const { done } = req.body;
 
-  const { data, error } = await supabase
-    .from("todos")
-    .update({ done })
-    .eq("id", id)
-    .select();
+  try {
+    const { data: item, error: getError } = await supabase
+      .from("todos")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-  if (error) return res.status(400).json(error);
-  res.json(data[0]);
+    if (getError) throw getError;
+
+    const { data, error } = await supabase
+      .from("todos")
+      .update({ done: !item.done })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.listen(3000, () => console.log("API running in http://localhost:3000"));
+app.listen(3000, () => console.log("API running on http://localhost:3000"));

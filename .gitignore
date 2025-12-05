@@ -23,5 +23,5 @@ chrome-user-data
 .vscode
 *.swp
 *.swo
-
-
+supabase-app/backend/.env
+supabase-app/frontend/.env

@@ -1,24 +1,33 @@
 import { useEffect, useState } from 'react';
-import { supabase } from './supabaseClient';
 
 export default function App() {
   const [todos, setTodos] = useState([]);
   const [text, setText] = useState('');
 
   async function load() {
-    const { data } = await supabase.from('todos').select('*').order('id');
+    const res = await fetch('http://localhost:3000/todos');
+    const data = await res.json();
     setTodos(data);
   }
 
   async function add() {
     if (!text) return;
-    await supabase.from('todos').insert({ text });
+
+    await fetch('http://localhost:3000/todos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+
     setText('');
     load();
   }
 
   async function toggle(todo) {
-    await supabase.from('todos').update({ done: !todo.done }).eq('id', todo.id);
+    await fetch(`http://localhost:3000/todos/${todo.id}/toggle`, {
+      method: 'PUT',
+    });
+
     load();
   }
 
@@ -30,14 +39,24 @@ export default function App() {
     <div style={{ padding: 20 }}>
       <h1>TODOs</h1>
 
-      <input value={text} onChange={(e) => setText(e.target.value)} />
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="Digite um todo..."
+      />
       <button onClick={add}>Adicionar</button>
 
       <ul>
-        {todos.map((t) => (
-          <li key={t.id} onClick={() => toggle(t)}>
-            <input type="checkbox" checked={t.done} readOnly />
-            {t.text}
+        {todos?.map((t) => (
+          <li key={t.id}>
+            <label style={{ cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={t.done}
+                onChange={() => toggle(t)}
+              />
+              {t.text}
+            </label>
           </li>
         ))}
       </ul>

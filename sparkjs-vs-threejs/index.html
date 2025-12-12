@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>Three.js + Spark Playground</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>Three.js + Spark quick playground</h1>
+      <div class="header-note">Three.js + SparkJS (single file)</div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <strong>Three.js — rotating cube</strong>
+        <canvas id="threeCanvas"></canvas>
+        <div class="controls">
+          <button id="resetCam">Reset camera</button>
+          <button id="toggleSpin">Toggle spin</button>
+        </div>
+        <div class="log" id="threeLog"></div>
+      </section>
+
+      <section class="panel">
+        <strong>SparkJS — splat loader</strong>
+        <canvas id="sparkCanvas"></canvas>
+        <div class="controls">
+          <button id="reloadSpark">Reload Spark</button>
+          <a class="link" href="https://sparkjs.dev/docs/" target="_blank"
+            >Spark docs</a
+          >
+        </div>
+        <div class="log" id="sparkLog"></div>
+      </section>
+    </main>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.178.0/three.module.js",
+          "@sparkjsdev/spark": "https://sparkjs.dev/releases/spark/0.1.10/spark.module.js"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import * as THREE from "three";
+      import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js";
+
+      import * as Spark from "@sparkjsdev/spark";
+
+      const logThree = document.getElementById("threeLog");
+      const logSpark = document.getElementById("sparkLog");
+
+      function addLog(target, msg) {
+        const el = document.createElement("div");
+        el.textContent = msg;
+        target.appendChild(el);
+      }
+
+      const tCanvas = document.getElementById("threeCanvas");
+      const tRenderer = new THREE.WebGLRenderer({
+        canvas: tCanvas,
+        antialias: true,
+      });
+      tRenderer.setPixelRatio(devicePixelRatio);
+      tRenderer.setSize(tCanvas.clientWidth, tCanvas.clientHeight, false);
+
+      const tScene = new THREE.Scene();
+      tScene.background = new THREE.Color(0x081020);
+
+      const tCamera = new THREE.PerspectiveCamera(
+        50,
+        tCanvas.clientWidth / tCanvas.clientHeight,
+        0.1,
+        1000
+      );
+      tCamera.position.set(2, 2, 4);
+
+      const tControls = new OrbitControls(tCamera, tRenderer.domElement);
+      tControls.enableDamping = true;
+
+      const cube = new THREE.Mesh(
+        new THREE.BoxGeometry(1.2, 1.2, 1.2),
+        new THREE.MeshStandardMaterial({ color: 0x77aaff })
+      );
+      tScene.add(cube);
+
+      tScene.add(new THREE.AmbientLight(0xffffff, 0.4));
+      const tDir = new THREE.DirectionalLight(0xffffff, 0.9);
+      tDir.position.set(4, 6, 2);
+      tScene.add(tDir);
+
+      new ResizeObserver(() => {
+        tRenderer.setSize(tCanvas.clientWidth, tCanvas.clientHeight, false);
+        tCamera.aspect = tCanvas.clientWidth / tCanvas.clientHeight;
+        tCamera.updateProjectionMatrix();
+      }).observe(tCanvas);
+
+      let spinning = true;
+
+      document.getElementById("toggleSpin").onclick = () => {
+        spinning = !spinning;
+      };
+
+      document.getElementById("resetCam").onclick = () => {
+        tCamera.position.set(2, 2, 4);
+        tControls.target.set(0, 0, 0);
+        tControls.update();
+      };
+
+      function loopThree() {
+        requestAnimationFrame(loopThree);
+        if (spinning) cube.rotation.y += 0.01;
+        tControls.update();
+        tRenderer.render(tScene, tCamera);
+      }
+      loopThree();
+
+      addLog(logThree, "Three.js loaded");
+
+      const sCanvas = document.getElementById("sparkCanvas");
+      const sRenderer = new THREE.WebGLRenderer({
+        canvas: sCanvas,
+        antialias: true,
+      });
+      sRenderer.setPixelRatio(devicePixelRatio);
+      sRenderer.setSize(sCanvas.clientWidth, sCanvas.clientHeight, false);
+
+      const sScene = new THREE.Scene();
+      sScene.background = new THREE.Color(0x091018);
+
+      const sCamera = new THREE.PerspectiveCamera(
+        50,
+        sCanvas.clientWidth / sCanvas.clientHeight,
+        0.1,
+        1000
+      );
+      sCamera.position.set(0, 1.5, 4);
+
+      const sControls = new OrbitControls(sCamera, sRenderer.domElement);
+      sControls.enableDamping = true;
+
+      sScene.add(new THREE.AmbientLight(0xffffff, 0.4));
+      const sDir = new THREE.DirectionalLight(0xffffff, 0.9);
+      sDir.position.set(4, 6, 2);
+      sScene.add(sDir);
+
+      new ResizeObserver(() => {
+        sRenderer.setSize(sCanvas.clientWidth, sCanvas.clientHeight, false);
+        sCamera.aspect = sCanvas.clientWidth / sCanvas.clientHeight;
+        sCamera.updateProjectionMatrix();
+      }).observe(sCanvas);
+
+      let sparkRenderer = null;
+      let sparkMesh = null;
+
+      async function loadSpark() {
+        logSpark.textContent = "";
+        addLog(logSpark, "Loading Spark...");
+
+        sparkRenderer = new Spark.SparkRenderer(sRenderer);
+        sparkMesh = await Spark.SplatMesh.fromURL(
+          "https://sparkjs.dev/assets/splats/butterfly.spz"
+        );
+
+        sparkMesh.position.set(0, 0, -3);
+        sScene.add(sparkMesh);
+
+        addLog(logSpark, "Spark loaded");
+      }
+
+      document.getElementById("reloadSpark").onclick = loadSpark;
+      loadSpark();
+
+      function loopSpark() {
+        requestAnimationFrame(loopSpark);
+        sControls.update();
+        sRenderer.render(sScene, sCamera);
+        if (sparkRenderer) sparkRenderer.render(sScene, sCamera);
+      }
+      loopSpark();
+    </script>
+  </body>
+</html>

@@ -4,6 +4,8 @@ This project is a 3D visualization playground comparing two different rendering 
 
 ## Demo
 
+https://github.com/user-attachments/assets/f37ab6ea-7d33-4a74-83a2-0f3617a99b58
+
 ## 🚀 Quick Start
 
 Because this project loads textures (`.jpg` images) from the web, browsers will block the request due to CORS security policies if you simply open the `index.html` file. You must run it via a local server.
